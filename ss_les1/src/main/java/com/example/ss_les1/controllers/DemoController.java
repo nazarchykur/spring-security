@@ -11,3 +11,12 @@ public class DemoController {
         return "Hello!";
     }
 }
+
+/*
+ за замовчуванням працює Basic   (всі картинки 2 ...)
+ 
+ https://www.base64decode.org/
+     headers from postman
+ 
+        Authorization       Basic dXNlcjpkMjJhMzcwMC0zOWI5LTQ1MzYtOTRmZS0xZjA4NWE2MzdmM2I=
+ */
