@@ -1,5 +1,6 @@
 package com.example.ss_les3.config.security.filters;
 
+import com.example.ss_les3.config.security.authentication.CustomAuthentication;
 import com.example.ss_les3.config.security.managers.CustomAuthenticationManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,7 +31,15 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             4) if the object is authenticated then send request to the next filter in the chain
             
          */
-        Authentication authentication = customAuthenticationManager.authenticate(null);
+
+        // 1.
+        String key = String.valueOf(request.getHeader("key"));
+        CustomAuthentication customAuthentication = new CustomAuthentication(false, key);
+
+        // 2. call Manager and 3. get Authentication 
+        Authentication authentication = customAuthenticationManager.authenticate(customAuthentication);
+        
+        // 4. 
         if (authentication.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             
