@@ -1,6 +1,6 @@
 package com.example.ss_les3.config;
 
-import com.example.ss_les3.security.filters.CustomAuthenticationFilter;
+import com.example.ss_les3.config.security.filters.CustomAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

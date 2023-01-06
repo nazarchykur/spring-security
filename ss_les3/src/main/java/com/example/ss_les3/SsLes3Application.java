@@ -20,5 +20,12 @@ public class SsLes3Application {
  			
  2) далі працюємо з AuthenticationManager
     його роль = передати до провайдера, так як у нас може бути багато провайдерів,
-    навіть якщо у нас є тільки один провайдер, всеодно не пропускати AuthenticationManager  			
+    навіть якщо у нас є тільки один провайдер, всеодно не пропускати AuthenticationManager  
+    
+			@Component
+			public class CustomAuthenticationManager implements AuthenticationManager	
+			   
+			   public Authentication authenticate(Authentication authentication)   <= перезаписати єдиний метод 
+    
+    CustomAuthenticationManager ми маємо додати до CustomAuthenticationFilter як депенденсі і  		
  */
