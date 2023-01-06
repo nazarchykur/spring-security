@@ -11,3 +11,20 @@ public class SsLes2Application {
 	}
 
 }
+
+/*
+добавимо таблиці
+
+	authorities
+			# id, name
+			'1', 'read'
+
+
+
+	users_authorities
+				insert into users_authorities values (1, 1);
+				
+		# user_id, authority_id
+			1			1
+
+ */
