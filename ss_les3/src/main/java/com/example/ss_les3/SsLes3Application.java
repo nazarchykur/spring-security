@@ -27,5 +27,26 @@ public class SsLes3Application {
 			   
 			   public Authentication authenticate(Authentication authentication)   <= перезаписати єдиний метод 
     
-    CustomAuthenticationManager ми маємо додати до CustomAuthenticationFilter як депенденсі і  		
+    CustomAuthenticationManager ми маємо додати до CustomAuthenticationFilter як депенденсі
+    
+    
+ 3) далі йдемо до провайдера   
+ 
+		@Component
+		public class CustomAuthenticationProvider  implements AuthenticationProvider 	
+					
+				@Override
+				public Authentication authenticate(Authentication authentication)
+				
+		де у методі authenticate() перевіримо чи є ключ у хедері і чи він коректний
+		
+		
+	4) далі, якщо все ОК, то назад по цій цепочці повертаємо уже аутентифікованого
+	
+	5) у SecurityContext зберігається уже аутентифікований
+	
+	6) і тільки потім передається на наступний фільтр, якщо він є
+	
+	... 		
+	..) фільтр по Авторизації вже буде брати з SecurityContext аутентифікований акаунт (юзер ...)
  */

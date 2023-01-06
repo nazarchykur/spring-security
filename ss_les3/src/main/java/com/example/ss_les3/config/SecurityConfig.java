@@ -34,10 +34,10 @@ public class SecurityConfig {
  */
 
 /*
-    використовуємо свій фільтер CustomAuthenticationFilter
+    використовуємо свій фільтр CustomAuthenticationFilter
         
      > .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) - означає, що коли буде 
-                відпрацьовувати UsernamePasswordAuthenticationFilter, то у цей момент добавити наш фільтер
+                відпрацьовувати UsernamePasswordAuthenticationFilter, то у цей момент добавити наш фільтр
  
  
     > .authorizeHttpRequests().anyRequest().authenticated() - пізніше повернемося до цього, але поки що потрібно знати, 
