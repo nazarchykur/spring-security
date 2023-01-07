@@ -21,7 +21,8 @@ public class SecurityConfig {
                 .and()
                     .authorizeHttpRequests()
 //                        .anyRequest().authenticated()
-                        .anyRequest().permitAll()
+//                        .anyRequest().permitAll()
+                        .anyRequest().denyAll()
                 .and()
                 .build();
     }
@@ -77,4 +78,13 @@ public class SecurityConfig {
                 і він подаде далі до SecurityContext, а так як після аутентифікації йде авторизація, то 
                 цей authentication вже буде перевірятися і якщо комбінація логіну і паролю не вірні, то 
                 буде 401 Unauthorized
+                
+                
+             .denyAll()  
+                 застосовується для відхилення всіх запитів, навіть якщо вони надходять із надійного джерела з автентифікованими користувачами.
+                    Це метод, необхідний для відхилення запитів.
+             
+                    .anyRequest().denyAll()        - всі запити відхилені
+                    .antMatchers("/*").denyAll()   - всі запити по цьому патерну відхилені
+                    ...
  */
