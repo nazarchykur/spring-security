@@ -22,7 +22,9 @@ public class SecurityConfig {
                     .authorizeHttpRequests()
 //                        .anyRequest().authenticated()
 //                        .anyRequest().permitAll()
-                        .anyRequest().denyAll()
+//                        .anyRequest().denyAll()
+//                .anyRequest().hasAuthority("read")
+                .anyRequest().hasAnyAuthority("read", "write")
                 .and()
                 .build();
     }
@@ -31,12 +33,18 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
         
-        UserDetails userDetails = User.withUsername("john")
+        var u1 = User.withUsername("john")
                 .password(passwordEncoder().encode("pass"))
                 .authorities("read")
                 .build();
 
-        inMemoryUserDetailsManager.createUser(userDetails);
+        var u2 = User.withUsername("bill")
+                .password(passwordEncoder().encode("pass"))
+                .authorities("write")
+                .build();
+
+        inMemoryUserDetailsManager.createUser(u1);
+        inMemoryUserDetailsManager.createUser(u2);
         
         return inMemoryUserDetailsManager;
     }
@@ -63,7 +71,7 @@ public class SecurityConfig {
                 2) як додати різні authorization rules
                 
                 
-                
+      ------------------------------------------------------------------------------------------------------------------          
             (див картинку postman 200 and 401)
             .anyRequest().permitAll() - означає, що для буль-якого запиту не потрібна аутентифікація
                 + все рівно це дозволить зайти з нашим логіном і паролем 
@@ -78,7 +86,7 @@ public class SecurityConfig {
                 і він подаде далі до SecurityContext, а так як після аутентифікації йде авторизація, то 
                 цей authentication вже буде перевірятися і якщо комбінація логіну і паролю не вірні, то 
                 буде 401 Unauthorized
-                
+        ------------------------------------------------------------------------------------------------------------------        
                 
              .denyAll()  
                  застосовується для відхилення всіх запитів, навіть якщо вони надходять із надійного джерела з автентифікованими користувачами.
@@ -87,4 +95,15 @@ public class SecurityConfig {
                     .anyRequest().denyAll()        - всі запити відхилені
                     .antMatchers("/*").denyAll()   - всі запити по цьому патерну відхилені
                     ...
+                    
+        ------------------------------------------------------------------------------------------------------------------            
+             (дивись картинки 401 / 403 / hasAuthority)
+             
+             .hasAuthority()       
+                    .hasAuthority("read") - можна передати один параметр, який надасть право, наприклад, тільки читати
+                        і в залежності від того які права є у юзера, давати чи не давати йому доступ до цього ендроінту
+               
+             .hasAnyAuthority()
+                    .hasAnyAuthority("read", "write")  - можна передати кілька параметрів, і якщо юзер має хоча б якейсь
+                        з цих перераховних прав, то доступ буде дозволено, в іншому випадку заборонено  403 Forbidden      
  */
