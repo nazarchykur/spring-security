@@ -24,7 +24,9 @@ public class SecurityConfig {
 //                        .anyRequest().permitAll()
 //                        .anyRequest().denyAll()
 //                .anyRequest().hasAuthority("read")
-                .anyRequest().hasAnyAuthority("read", "write")
+//                .anyRequest().hasAnyAuthority("read", "write")
+//                .anyRequest().hasRole("ADMIN")
+                .anyRequest().hasAnyRole("ADMIN", "MANAGER")
                 .and()
                 .build();
     }
@@ -35,12 +37,15 @@ public class SecurityConfig {
         
         var u1 = User.withUsername("john")
                 .password(passwordEncoder().encode("pass"))
-                .authorities("read")
+//                .authorities("read") // if we use .hasAuthority()
+//                .authorities("ROLE_ADMIN") // if we use .hasRole()
+                .roles("ADMIN")
                 .build();
 
         var u2 = User.withUsername("bill")
                 .password(passwordEncoder().encode("pass"))
-                .authorities("write")
+//                .authorities("write")
+                .roles("MANAGER")
                 .build();
 
         inMemoryUserDetailsManager.createUser(u1);
@@ -106,4 +111,23 @@ public class SecurityConfig {
              .hasAnyAuthority()
                     .hasAnyAuthority("read", "write")  - можна передати кілька параметрів, і якщо юзер має хоча б якейсь
                         з цих перераховних прав, то доступ буде дозволено, в іншому випадку заборонено  403 Forbidden      
+                        
+        ------------------------------------------------------------------------------------------------------------------            
+            .hasRole()
+                    .hasRole("ADMIN") / .hasRole("MANAGER") / ...
+                
+                .hasRole() = використовуємо коли потрібно надати доступ до певних ендпоінтів тільки тим користувачам, 
+                            які мають відповідні ролі (ADMIN / MANAGER / CALLCENTER / USER / ... )
+                
+                .authorities("ROLE_ADMIN")  => якщо використовуємо .authorities(), то ролі перераховуємо з приставною ROLE_
+                .roles("ADMIN")    =>  якщо використовуємо .roles(), то просто перераховуємо потрібні ролі
+                        
+                         *- .authorities("ROLE_ADMIN") == .roles("ADMIN")  то саме
+                         
+
+            .hasAnyRole() - перевірить чи є хоча б одна із ролей
+                    .hasAnyRole("ADMIN", "MANAGER")
+
+
+                        
  */
