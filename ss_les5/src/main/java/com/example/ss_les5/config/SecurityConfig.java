@@ -19,7 +19,9 @@ public class SecurityConfig {
         return http
                 .httpBasic()
                 .and()
-                    .authorizeHttpRequests().anyRequest().authenticated()
+                    .authorizeHttpRequests()
+//                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 .and()
                 .build();
     }
@@ -58,4 +60,21 @@ public class SecurityConfig {
                 matcher method + authorization rule
                 1) який matcher method ми повинні використовувати і як саме
                 2) як додати різні authorization rules
+                
+                
+                
+            (див картинку postman 200 and 401)
+            .anyRequest().permitAll() - означає, що для буль-якого запиту не потрібна аутентифікація
+                + все рівно це дозволить зайти з нашим логіном і паролем 
+                
+                !!!  але якщо логін або пароль НЕ правильний, то все рівно отримаємо 401 Unauthorized  
+                
+                так як перше йде authentication, а потім authorization, і два працюють з SecurityContext,
+                то якщо немає аутентифікації при запиті (No Auth), то у SecurityContext нічого не було добавлено
+                і тому всі запити проходять без всіляких прав і обмежень
+                
+                якщо ж ми хочемо зайти через Auth Basic, то під час аутентифікація зміниться authentication
+                і він подаде далі до SecurityContext, а так як після аутентифікації йде авторизація, то 
+                цей authentication вже буде перевірятися і якщо комбінація логіну і паролю не вірні, то 
+                буде 401 Unauthorized
  */
