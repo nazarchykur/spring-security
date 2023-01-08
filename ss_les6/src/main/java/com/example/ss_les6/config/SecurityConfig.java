@@ -87,6 +87,22 @@ public class SecurityConfig {
             .mvcMatchers()   - цей варіант пріоритетніший
             .antMatchers()   
             
+           використовуючи  .antMatchers()  слід завжди пам'ятати за УРЛи, які ми додаємо до цього патерну, 
+           бо .antMatchers("/test/test1").authenticated() виконається коректно, якщо ми постукаємося на "/test/test1",
+           але ми зможемо зайти без автентифікації за шляхом "/test/test1/", тобто добавивши вкінці /
+           тому тут потрібно уважно дивитися за переліком шляхів, і наприклад добавити ці 2 можливі варіанти:
+                .antMatchers("/test/test1", "/test/test1/").authenticated(), щоб відпрацювало коректно
+                
+           * при .mvcMatchers() завжди відпрацює коректно
+            
+            
+     !!! Але У Spring Security 6.0 antMatchers(), а також інші методи конфігурації для захисту запитів 
+            ( а саме mvcMatchers() та regexMatchers() ) були видалені з API.
+
+    замість тих видалених використовується тільки один    requestMatchers()
+    
+            
+ ----------------------------------------------------------------------------------------------------------------------
             
     можна використовувати деякий перелік запитів   .requestMatchers("/test1", "/test3")        
     але зручніше і практичніше описати певну групу ендпоінтів, тобто певні запити, які будуть об'єднані
@@ -147,8 +163,6 @@ public class SecurityConfig {
                 
                 
 ----------------------------------------------------------------------------------------------------------------------
-https://stackoverflow.com/questions/28907030/spring-security-authorize-request-for-certain-url-http-method-using-httpsecu/74633151#74633151
-
 https://stackoverflow.com/questions/74683225/updating-to-spring-security-6-0-replacing-removed-and-deprecated-functionality
 
 У Spring Security 6.0 antMatchers(), а також інші методи конфігурації для захисту запитів 
@@ -178,7 +192,7 @@ https://stackoverflow.com/questions/74683225/updating-to-spring-security-6-0-rep
      
      Щодо застарілої анотації@EnableGlobalMethodSecurityйого було замінено на @EnableMethodSecurity. 
      Обґрунтування цієї зміни полягає в тому, що з @EnableMethodSecurity властивістю prePostEnabled, необхідною 
-     для ввімкнення використання, @PreAuthorize/@PostAuthorizeі @PreFilter/@PostFilterза замовчуванням встановлено на true.
+     для ввімкнення використання, @PreAuthorize/@PostAuthorize і @PreFilter/@PostFilterза замовчуванням встановлено на true.
      
      Тож вам більше не потрібно писати prePostEnabled = true, достатньо буде лише анотувати ваш 
      клас конфігурації @EnableMethodSecurity.
