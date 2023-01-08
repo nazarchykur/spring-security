@@ -142,5 +142,47 @@ public class SecurityConfig {
             > Маркер CSRF зазвичай додається до запитів, які змінюють стан, наприклад POST, PUT, DELETE, PATCH .
             
             > Ідемпотентні методи, такі як GET, не вразливі до атак CSRF, оскільки вони не змінюють стан на стороні 
-                сервера та захищені тією самою політикою походження .                  
+                сервера та захищені тією самою політикою походження .
+                
+                
+                
+----------------------------------------------------------------------------------------------------------------------
+https://stackoverflow.com/questions/28907030/spring-security-authorize-request-for-certain-url-http-method-using-httpsecu/74633151#74633151
+
+https://stackoverflow.com/questions/74683225/updating-to-spring-security-6-0-replacing-removed-and-deprecated-functionality
+
+У Spring Security 6.0 antMatchers(), а також інші методи конфігурації для захисту запитів 
+    ( а саме mvcMatchers() та regexMatchers() ) були видалені з API.
+
+    Перевантажений метод requestMatchers() був введений як уніфікований засіб для захисту запитів. 
+     requestMatchers() полегшують усі способи обмеження запитів, які підтримувалися вилученими методами.
+     
+     Крім того, метод authorizeRequests() застарів (deprecated), і його більше не слід використовувати. 
+     Рекомендована заміна - authorizeHttpRequests()
+     
+     
+     Ось як ваш SecurityFilterChain може бути визначений у Spring Security 6.0:
+     
+     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/token/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+            .httpBasic(Customizer.withDefaults())
+            .build();
+     }
+     
+     Щодо застарілої анотації@EnableGlobalMethodSecurityйого було замінено на @EnableMethodSecurity. 
+     Обґрунтування цієї зміни полягає в тому, що з @EnableMethodSecurity властивістю prePostEnabled, необхідною 
+     для ввімкнення використання, @PreAuthorize/@PostAuthorizeі @PreFilter/@PostFilterза замовчуванням встановлено на true.
+     
+     Тож вам більше не потрібно писати prePostEnabled = true, достатньо буде лише анотувати ваш 
+     клас конфігурації @EnableMethodSecurity.
+     
+         
+                  
  */
