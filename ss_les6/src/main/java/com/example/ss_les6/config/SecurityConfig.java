@@ -2,6 +2,7 @@ package com.example.ss_les6.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,8 +50,10 @@ public class SecurityConfig {
 //                        .requestMatchers("/test1").authenticated()
 //                        .requestMatchers("/test2").hasAuthority("read")
 //                        .requestMatchers("/test2").permitAll()
-                        .requestMatchers("/demo/**").hasAuthority("read")
-                .and()
+//                        .requestMatchers("/demo/**").hasAuthority("read")
+                        .requestMatchers(HttpMethod.GET, "/demo/**").hasAuthority("read")
+                .anyRequest().authenticated()
+                .and().csrf().disable() // DON'T DO THAT IN REAL APPS
                 .build();
     }
 }
@@ -103,6 +106,41 @@ public class SecurityConfig {
         URL-адреси збігаються з "/*"
             /book
             /magazine
+            
+----------------------------------------------------------------------------------------------------------------------
 
-                              
+    .requestMatchers(HttpMethod.GET, "/demo/**").hasAuthority("read") - означає, що по патерну "/demo/**" можна 
+        заходити всім користувачам, але GET метод по цій урлі можна лише тим, хто має "read" права
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------
+        Cross-Site Request Forgery (CSRF) 
+        
+        Міжсайтова підробка запитів (CSRF, іноді також називається XSRF) - це атака, яка може змусити кінцевого 
+        користувача за допомогою веб-програми несвідомо виконати дії, які можуть поставити під загрозу безпеку.
+        
+        
+        !!! починаючи з Spring Security 4.0, захист CSRF увімкнено за замовчуванням .
+        
+        
+        Як працює стандартний захист Spring CSRF?
+        
+        Spring Security використовує шаблон маркера синхронізатора для генерації маркера CSRF, який захищає від атак CSRF.
+
+        Особливості токена CSRF:
+            > Маркер CSRF за замовчуванням генерується на сервері за допомогою Spring framework.
+            
+            > Цей маркер CSRF має бути частиною кожного запиту HTTP. Це не є частиною файлу cookie, оскільки браузер 
+                автоматично включає файли cookie з кожним запитом HTTP .
+                
+            > Коли надсилається HTTP-запит, Spring Security порівнює очікуваний CSRF-токен із тим, що надіслано в HTTP-запиті . 
+                Запит буде оброблено, лише якщо значення маркера збігаються, інакше запит буде розглядатися як 
+                підроблений і буде відхилено зі статусом 403 (Заборонено) .
+                
+            > Маркер CSRF зазвичай додається до запитів, які змінюють стан, наприклад POST, PUT, DELETE, PATCH .
+            
+            > Ідемпотентні методи, такі як GET, не вразливі до атак CSRF, оскільки вони не змінюють стан на стороні 
+                сервера та захищені тією самою політикою походження .                  
  */
