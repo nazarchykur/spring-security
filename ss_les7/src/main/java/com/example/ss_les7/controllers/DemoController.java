@@ -1,10 +1,17 @@
 package com.example.ss_les7.controllers;
 
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 public class DemoController {
@@ -68,6 +75,56 @@ public class DemoController {
         return "demo6";
     }
     
+    
+//    @PreFilter()  - parameter type must be either a Collection(List / Set) or Array
+    
+    /*
+        даний приклад показує як використати @PreFilter, але суть його застосування завжди у контексті безпеки
+        тобто, наприклад, відфільтрувати деякий список об'єктів, який належить тільки цьому юзеру
+        
+        тобто ми НЕ використовуємо @PreFilter(), щоб просто відфільтрувати 
+     */
+
+    @GetMapping("/demo7")
+    @PreFilter("filterObject.contains('a')")
+    public String demo7(@RequestBody List<String> values) {
+        /*
+            curl --location --request GET 'http://localhost:9007/demo7' \
+            --header 'Authorization: Basic YmlsbDpwYXNz' \
+            --header 'Content-Type: application/json' \
+            --data-raw '["qwer", "ty", "asd", "zxc", "qaaaz"]'
+            
+            
+            тобто ми бачимо, що запит відбувався але з переданого списку 
+                ["qwer", "ty", "asd", "zxc", "qaaaz"]
+            було відфільтровано рядки які містять букву "а"
+            і тому на виході отримали:
+                values = [asd, qaaaz]
+                
+                
+         */
+        System.out.println("values = " + values); 
+        
+        return "demo7";
+    }
+    
+    
+    //  @PostFilter  - returned type must be either a Collection(List / Set) or Array
+
+    @GetMapping("/demo8")
+    @PostFilter("filterObject.contains('a')")
+    public List<String> demo7() {
+//        return List.of("a", "b", "c"); // List.of creates an immutable collection => DO NOT work
+//        return Arrays.asList("a", "b", "c");
+        
+        var list = new ArrayList<String>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        
+        return list; // поверне тільки список, де буде літера "a"
+    }
+    
 }
 
 /*
@@ -126,6 +183,47 @@ public class DemoController {
             public CustomUser loadUserDetail(String username) {
                 return userRoleRepository.loadUserByUserName(username);
             }
+ */
+
+/*
+@PreFilter and @PostFilter
+
+    @PreFilter and @PostFilter are designated to use with Spring security to be able to filter collections or 
+    arrays based on the authorization.
+    
+    To have this working, you need to use expression-based access control in spring security
+    
+            @PreFilter - filters the collection or arrays before executing method.
+            @PostFilter - filters the returned collection or arrays after executing the method.
+    
+    
+    So, let's say your getUser() returns List of Users. Spring Security will iterate through the list and remove 
+    any elements for which the applied expression is false (e.g. is not admin, and does not have read permission)
+    
+    filterObject is built-in object on which filter operation is performed and you can apply various conditions to 
+    this object (basically all built-in expressions are available here, e.g. principal, authentication), 
+    for example you can do
+    
+            @PostFilter ("filterObject.owner == authentication.name")
+    
+    Though those filters are useful, it is really inefficient with large data sets, and basically you lose control 
+    over your result, instead Spring controls the result.
+    
+    ==================================================================================================================
+    
+            @PreAuthorize ("hasRole('ROLE_READ')")
+            @PostFilter ("filterObject.owner == authentication.name")
+            public List<Book> getBooks();
+            
+            @PreFilter("filterObject.owner == authentication.name")
+            public void addBook(List<Book> books);
+    
+    The filterObject is built-in object on which filter operation is performed. In the above code, for the first 
+    method getBooks(), we have used @PreAuthorize and @PostFilter annotations. Before executing method, user is 
+    authorized on the basis of role and then after executing, the returned object is filtered on the basis of owner. 
+    Second method addBook() is only using @PreFilter on the basis of owner.
+    
+
  */
 
 /*
