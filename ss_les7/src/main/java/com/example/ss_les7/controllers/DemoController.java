@@ -26,6 +26,31 @@ public class DemoController {
         return "demo3";
     }
     
+    /*
+        можна використовувати складнішу логіку, але код стає менш читабельним
+        і чим більше ліній коду, тим краще винести цю складну логіку до класу 
+        і потім передати як у прикладі demo5:
+                  @GetMapping("/demo5")
+                  @PreAuthorize("@demoForConditionEvaluator.condition()") // доступ до біна через @
+    
+     */
+    @GetMapping("/demo4/{smth}")
+    @PreAuthorize(
+        """
+        (#something == authentication.name) or
+        hasAnyAuthority("write", "read")
+        """) 
+    public String demo4(@PathVariable("smth") String something) {
+        return "demo4";
+    }
+
+    @GetMapping("/demo5")
+    @PreAuthorize("@demoForConditionEvaluator.condition()") // доступ до біна через @
+    public String demo5() {
+        return "demo5";
+    }
+    
+    
 }
 
 /*
@@ -37,4 +62,11 @@ public class DemoController {
 
 /*
      @PreAuthorize("hasAuthority('read')") - означає, що юзер може викликати цей ендпоінт тільки тоді якщо має права 'read'
+ */
+
+/*
+    hasAuthority() hasAnyAuthority() hasRole() hasAnyRole()
+    
+    використовуючи Аспект ми можемо використовувати це і у сервісах, і репозиторіях, але доцільно це робити
+    саме у контролері, який якраз перший у цій цепочці приймає запит 
  */
