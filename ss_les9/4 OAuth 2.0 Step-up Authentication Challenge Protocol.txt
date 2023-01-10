@@ -1,0 +1,14 @@
+OAuth 2.0 Step-up Authentication Challenge Protocol
+
+        https://darutk.medium.com/stepup-authn-ef5ac37b18e2
+        
+        
+        
+        
+        
+Grant Management for OAuth 2.0  
+        
+        https://darutk.medium.com/grant-management-be9aeff3b394
+        
+        
+              
